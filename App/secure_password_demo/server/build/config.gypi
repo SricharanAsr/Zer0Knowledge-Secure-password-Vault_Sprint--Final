@@ -499,16 +499,15 @@
     "python": "C:\\Users\\kusha\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
     "standalone_static_library": 1,
     "msbuild_path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
-    "yes": "true",
-    "user_agent": "npm/10.9.3 node/v22.20.0 win32 x64 workspaces/false",
-    "userconfig": "C:\\Users\\kusha\\.npmrc",
-    "prefix": "C:\\Users\\kusha\\AppData\\Roaming\\npm",
-    "npm_version": "10.9.3",
-    "node_gyp": "C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
-    "local_prefix": "C:\\Users\\kusha\\OneDrive\\Desktop\\Integrated Product\\App\\secure_password_demo\\server",
-    "init_module": "C:\\Users\\kusha\\.npm-init.js",
-    "global_prefix": "C:\\Users\\kusha\\AppData\\Roaming\\npm",
+    "cache": "C:\\Users\\kusha\\AppData\\Local\\npm-cache",
     "globalconfig": "C:\\Users\\kusha\\AppData\\Roaming\\npm\\etc\\npmrc",
-    "cache": "C:\\Users\\kusha\\AppData\\Local\\npm-cache"
+    "global_prefix": "C:\\Users\\kusha\\AppData\\Roaming\\npm",
+    "init_module": "C:\\Users\\kusha\\.npm-init.js",
+    "local_prefix": "C:\\Users\\kusha\\OneDrive\\Desktop\\Secure_Password_Manager_Extension\\App\\secure_password_demo\\server",
+    "node_gyp": "C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
+    "npm_version": "10.9.3",
+    "prefix": "C:\\Users\\kusha\\AppData\\Roaming\\npm",
+    "userconfig": "C:\\Users\\kusha\\.npmrc",
+    "user_agent": "npm/10.9.3 node/v22.20.0 win32 x64 workspaces/false"
   }
 }
