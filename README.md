@@ -105,11 +105,53 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
-## 🧪 Development & Testing
+## 🧪 Quality Assurance & Testing
 
-- **Backend Tests**: `cd server && npm test` (Jest)
-- **Frontend Tests**: `cd client && npm test` (Vitest)
-- **Build Native**: `npm run build:addon` (Requires C++ compiler)
+Zero Vault maintains a high-security standard through a multi-layered automated testing and Quality Assurance (QA) strategy.
+
+### 🏗️ Testing Pipeline Architecture
+
+Our QA engineering workflow ensures that every security claim is validated automatically before code reaches production.
+
+```mermaid
+graph TD
+    subgraph "Local Verification"
+        A[Developer Code] -->|npm test| B[Unit/Integration Tests]
+        A -->|playwright| C[E2E Tests]
+    end
+
+    subgraph "CI/CD Automation"
+        D[GitHub Actions] --> E[CI-CD Pipeline]
+        D --> F[QA Automation Pipeline]
+        
+        E -->|C++| G[Risk Engine Build & Unit Tests]
+        F -->|Playwright| H[Full E2E Suite]
+        F -->|k6| I[Performance Load Tests]
+        F -->|Node.js| J[QA Touch Reporter]
+    end
+
+    subgraph "Reporting & Audit"
+        H -->|Results| K[QA Touch Dashboard]
+        I -->|Metrics| K
+        J -->|Sync| K
+    end
+```
+
+### 🎯 QA Strategy Overview
+
+- **Security Engineering**: Tests verify zero-knowledge integrity, ensuring master passwords never leave the client.
+- **Cross-Platform QA**: Automated Playwright runs across Chromium, Firefox, and WebKit for UI consistency.
+- **Performance Benchmarking**: Integrated k6 load testing ensures system latency remains <800ms for large datasets.
+- **Centralized Reporting**: All test results are automatically synchronized with the **QA Touch** dashboard for real-time visibility.
+
+### 🏃 How to Run Tests
+
+For a deep dive into our testing procedures, see the [Detailed Testing Guide](App/secure_password_demo/TESTING.md).
+
+- **Backend Logic (Jest)**: `cd App/secure_password_demo/server && npm test`
+- **Native Risk Engine**: `cd App/secure_password_demo/server/src/native/risk-engine && ./run_all_unit_tests.sh`
+- **Playwright E2E**: `cd App/secure_password_demo/e2e && npx playwright test`
+- **k6 Performance**: `cd App/secure_password_demo/performance && k6 run load-test.js`
 
 ---
 
