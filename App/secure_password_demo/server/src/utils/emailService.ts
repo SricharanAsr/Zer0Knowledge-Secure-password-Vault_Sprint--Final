@@ -65,18 +65,21 @@ export const sendOTPEmail = async (to: string, otp: string) => {
 
     // FALLBACK: Use Brevo HTTP API if API key is provided (Recommended for Render Free Tier)
     if (process.env.BREVO_API_KEY) {
+        const apiKey = process.env.BREVO_API_KEY.trim();
+        console.log(`Attempting to send email via Brevo... (Key length: ${apiKey.length}, starts with: ${apiKey.substring(0, 4)}...)`);
+
         try {
             const response = await fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
-                    'api-key': process.env.BREVO_API_KEY,
+                    'api-key': apiKey,
                     'content-type': 'application/json'
                 },
                 body: JSON.stringify({
                     sender: {
                         name: "ZeroVault",
-                        email: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER
+                        email: process.env.EMAIL_FROM_ADDRESS || "konduruhemesh143@gmail.com"
                     },
                     to: [{ email: to }],
                     subject: subject,

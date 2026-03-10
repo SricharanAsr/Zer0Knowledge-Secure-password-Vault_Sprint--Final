@@ -8,6 +8,9 @@ import { generalLimiter, authLimiter } from './middleware/rateLimiter';
 
 const app = express();
 
+// Trust proxy for Render/Vercel (required for rate-limiting to work correctly)
+app.set('trust proxy', 1);
+
 // Middleware
 const allowedOrigin = process.env.FRONTEND_URL || '*';
 app.use(cors({
