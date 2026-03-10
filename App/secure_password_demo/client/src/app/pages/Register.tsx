@@ -51,7 +51,6 @@ export default function Register() {
             isSignUp={true}
             testimonials={sampleTestimonials}
             onSignIn={handleSignUp}
-            onGoogleSignIn={() => showToast('Google sign-in is coming soon!', 'info')}
             onSwitchMode={() => setLocation('/')}
             heroNode={
                 <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
