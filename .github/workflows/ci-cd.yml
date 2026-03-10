@@ -21,11 +21,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y build-essential
 
       - name: Make scripts executable
-        run: chmod +x risk-engine/run_all_unit_tests.sh
+        run: chmod +x App/secure_password_demo/server/src/native/risk-engine/run_all_unit_tests.sh
 
       - name: Run Native Unit Tests
         run: |
-          cd risk-engine
+          cd App/secure_password_demo/server/src/native/risk-engine
           ./run_all_unit_tests.sh
 
   # ----------------------------------------------------
