@@ -1,25 +1,35 @@
 import nodemailer from 'nodemailer';
 
+console.log('Initializing Email Service...');
+console.log('ENV Check - Host:', !!process.env.EMAIL_HOST, 'User:', !!process.env.EMAIL_USER, 'Pass:', !!process.env.EMAIL_PASS);
+
+const isGmail = (process.env.EMAIL_HOST || '').includes('gmail.com') || !process.env.EMAIL_HOST;
+
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    secure: process.env.EMAIL_PORT === '465',
+    // Use 'service' shorthand for Gmail as it handles port/secure/tls defaults better on cloud
+    ...(isGmail ? { service: 'gmail' } : {
+        host: process.env.EMAIL_HOST,
+        port: parseInt(process.env.EMAIL_PORT || '587'),
+        secure: process.env.EMAIL_PORT === '465',
+    }),
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
+    tls: {
+        // Essential for some cloud environments
+        rejectUnauthorized: false
+    }
 });
 
-// Debug: Verify SMTP config (hidden in production)
-if (process.env.NODE_ENV !== 'production') {
-    transporter.verify((error) => {
-        if (error) {
-            console.error('SMTP Connection Error:', error);
-        } else {
-            console.log('Email Service: SMTP Connection Ready');
-        }
-    });
-}
+// Verify connection on startup to log status in Render/Production
+transporter.verify((error) => {
+    if (error) {
+        console.error('Email Service SMTP Connection Error:', error);
+    } else {
+        console.log('Email Service SMTP Connection: READY');
+    }
+});
 
 /**
  * Sends a 6-digit verification code to the user's email.
