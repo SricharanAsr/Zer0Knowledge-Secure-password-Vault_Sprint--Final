@@ -1,8 +1,9 @@
 import { useLocation } from 'wouter';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { SignInPage, type Testimonial } from '@/app/components/ui/sign-in';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useToast } from '@/app/contexts/ToastContext';
+import { MfaVerification } from '@/app/components/ui/mfa-verification';
 
 const Spline = lazy(() => import('@splinetool/react-spline'));
 
@@ -11,6 +12,7 @@ export default function Landing() {
     const [, setLocation] = useLocation();
     const { login } = useAuth();
     const { showToast } = useToast();
+    const [mfaData, setMfaData] = useState<{ userId: string; email: string } | null>(null);
 
     const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -20,7 +22,13 @@ export default function Landing() {
 
         try {
             showToast('Signing in...', 'info');
-            await login(email, password);
+            const result = await login(email, password);
+
+            if (result && result.requiresMFA && result.userId && result.email) {
+                setMfaData({ userId: result.userId, email: result.email });
+                return;
+            }
+
             showToast('Sign in successful!', 'success');
             setLocation('/dashboard');
         } catch (error: any) {
@@ -28,9 +36,6 @@ export default function Landing() {
         }
     };
 
-    const handleGoogleSignIn = () => {
-        showToast('Google sign-in is coming soon!', 'info');
-    };
 
     const sampleTestimonials: Testimonial[] = [
         {
@@ -47,6 +52,36 @@ export default function Landing() {
         }
     ];
 
+    // If we're in MFA mode, we show the MFA component inside our custom layout 
+    // that matches SignInPage's structure to keep it smooth.
+    if (mfaData) {
+        return (
+            <div className="h-[100dvh] w-[100dvw] bg-background relative overflow-hidden flex flex-col md:flex-row font-body">
+                {/* Left column: MFA form */}
+                <section className="flex-1 flex items-center justify-center p-8 bg-card relative z-20">
+                    <MfaVerification
+                        userId={mfaData.userId}
+                        email={mfaData.email}
+                        onCancel={() => setMfaData(null)}
+                    />
+                </section>
+
+                {/* Right column: hero (reused from SignInPage logic) */}
+                <section className="hidden md:block flex-1 relative overflow-hidden bg-background">
+                    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                        <div className="absolute -inset-y-[80px] -inset-x-[150px] pointer-events-auto">
+                            <Suspense fallback={<div className="w-full h-full bg-black/50" />}>
+                                <Spline scene="https://prod.spline.design/nyPq2v-2hiR8XXPp/scene.splinecode" />
+                            </Suspense>
+                        </div>
+                        <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-card to-transparent z-10 pointer-events-none" />
+                    </div>
+                </section>
+            </div>
+        );
+    }
+
+    // Default: Show the standard sign-in page
     return (
         <SignInPage
             title={<span className="font-light text-foreground tracking-tighter">Welcome back</span>}
@@ -54,7 +89,6 @@ export default function Landing() {
             isSignUp={false}
             testimonials={sampleTestimonials}
             onSignIn={handleSignIn}
-            onGoogleSignIn={handleGoogleSignIn}
             onSwitchMode={() => setLocation('/register')}
             onResetPassword={() => { }}
             heroNode={
@@ -64,7 +98,7 @@ export default function Landing() {
                             <Spline scene="https://prod.spline.design/nyPq2v-2hiR8XXPp/scene.splinecode" />
                         </Suspense>
                     </div>
-                    <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-card to-transparent z-10 pointer-events-none" />
                 </div>
             }
         />

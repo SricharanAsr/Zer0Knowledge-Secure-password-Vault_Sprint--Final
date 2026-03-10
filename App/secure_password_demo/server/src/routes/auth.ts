@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../storage/supabaseClient';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
+import { sendOTPEmail } from '../utils/emailService';
+import crypto from 'crypto';
 
 import * as fallbackEngine from "./riskEngineFallback";
 
@@ -109,9 +111,97 @@ router.post('/login', async (req: Request, res: Response) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
+        // --- MFA Flow Initialization ---
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes
+
+        const { error: otpError } = await supabase
+            .from('mfa_otps')
+            .insert([{
+                user_id: user.id,
+                otp_hash: otpHash,
+                expires_at: expiresAt
+            }]);
+
+        if (otpError) {
+            console.error('Failed to store OTP:', otpError);
+            return res.status(500).json({ error: 'Failed to initialize security challenge' });
+        }
+
+        try {
+            await sendOTPEmail(email, otp);
+        } catch (mailErr) {
+            console.error('MFA Email Error:', mailErr);
+            return res.status(500).json({ error: 'Failed to send verification email' });
+        }
+
+        return res.json({
+            requiresMFA: true,
+            userId: user.id,
+            email: user.email
+        });
+        // -------------------------------
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// POST /api/auth/verify-mfa
+router.post('/verify-mfa', async (req: Request, res: Response) => {
+    try {
+        const { userId, otp } = req.body;
+
+        if (!userId || !otp) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+
+        // Fetch valid OTP
+        const { data: mfaData, error: fetchError } = await supabase
+            .from('mfa_otps')
+            .select('*')
+            .eq('user_id', userId)
+            .gt('expires_at', new Date().toISOString())
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (fetchError || !mfaData) {
+            return res.status(401).json({ error: 'Invalid or expired verification code' });
+        }
+
+        if (mfaData.attempts >= 5) {
+            return res.status(403).json({ error: 'Too many failed attempts. Please login again.' });
+        }
+
+        if (mfaData.otp_hash !== otpHash) {
+            // Increment attempts
+            await supabase
+                .from('mfa_otps')
+                .update({ attempts: (mfaData.attempts || 0) + 1 })
+                .eq('id', mfaData.id);
+
+            return res.status(401).json({ error: 'Invalid verification code' });
+        }
+
+        // Success! Clean up used OTP
+        await supabase.from('mfa_otps').delete().eq('user_id', userId);
+
+        // Fetch full user data to issue token
+        const { data: user } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-        // US 3.1 & Epic Dynamic Profile: Update login stats
+        // Update login stats
         await supabase
             .from('users')
             .update({
@@ -131,7 +221,50 @@ router.post('/login', async (req: Request, res: Response) => {
             }
         });
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('MFA Verify error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// POST /api/auth/resend-mfa
+router.post('/resend-mfa', async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'Missing userId' });
+        }
+
+        // Fetch user email
+        const { data: user, error: userError } = await supabase
+            .from('users')
+            .select('email')
+            .eq('id', userId)
+            .single();
+
+        if (userError || !user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Generate new OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+
+        // Delete old OTPs and insert new one
+        await supabase.from('mfa_otps').delete().eq('user_id', userId);
+        const { error: otpError } = await supabase
+            .from('mfa_otps')
+            .insert([{ user_id: userId, otp_hash: otpHash, expires_at: expiresAt }]);
+
+        if (otpError) {
+            return res.status(500).json({ error: 'Failed to generate new code' });
+        }
+
+        await sendOTPEmail(user.email, otp);
+        res.json({ success: true, message: 'New verification code sent' });
+    } catch (error) {
+        console.error('MFA Resend error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });

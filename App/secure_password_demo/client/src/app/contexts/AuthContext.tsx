@@ -3,7 +3,9 @@ import type { AuthState } from '@/shared/models/auth.types';
 import { useToast } from './ToastContext';
 
 interface AuthContextType extends AuthState {
-    login: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string) => Promise<{ requiresMFA?: boolean; userId?: string; email?: string } | void>;
+    verifyMfa: (userId: string, otp: string) => Promise<void>;
+    resendMfa: (userId: string) => Promise<void>;
     register: (email: string, password: string, displayName?: string) => Promise<void>;
     logout: () => void;
 }
@@ -98,6 +100,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 throw new Error(data.error || 'Login failed');
             }
 
+            if (data.requiresMFA) {
+                return data; // Return MFA info to the component
+            }
+
             localStorage.setItem('vault_token', data.token);
             localStorage.setItem('vault_user', JSON.stringify(data.user));
             // For backward compatibility with existing code
@@ -113,6 +119,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             showToast('Login successful', 'success');
         } catch (error: unknown) {
             const msg = error instanceof Error ? error.message : 'Login failed';
+            showToast(msg, 'error');
+            throw error;
+        }
+    };
+
+    const verifyMfa = async (userId: string, otp: string) => {
+        try {
+            const response = await fetch(`${BASE_URL}/auth/verify-mfa`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, otp }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'MFA verification failed');
+            }
+
+            localStorage.setItem('vault_token', data.token);
+            localStorage.setItem('vault_user', JSON.stringify(data.user));
+            localStorage.setItem('vaultEmail', data.user.email);
+
+            setState({
+                user: data.user,
+                token: data.token,
+                isAuthenticated: true,
+                isLoading: false,
+            });
+
+            showToast('Security verified. Welcome back!', 'success');
+        } catch (error: unknown) {
+            const msg = error instanceof Error ? error.message : 'Verification failed';
+            showToast(msg, 'error');
+            throw error;
+        }
+    };
+
+    const resendMfa = async (userId: string) => {
+        try {
+            const response = await fetch(`${BASE_URL}/auth/resend-mfa`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to resend code');
+            }
+
+            showToast('New verification code sent to your email', 'success');
+        } catch (error: unknown) {
+            const msg = error instanceof Error ? error.message : 'Resend failed';
             showToast(msg, 'error');
             throw error;
         }
@@ -177,7 +238,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     return (
-        <AuthContext.Provider value={{ ...state, login, register, logout }}>
+        <AuthContext.Provider value={{ ...state, login, verifyMfa, resendMfa, register, logout }}>
             {children}
         </AuthContext.Provider>
     );
