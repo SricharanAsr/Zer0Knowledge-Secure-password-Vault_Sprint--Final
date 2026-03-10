@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { supabase } from '../storage/supabaseClient';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { sendOTPEmail } from '../utils/emailService';
-import crypto from 'crypto';
+import { OtpService } from '../services/otpService';
 
 import * as fallbackEngine from "./riskEngineFallback";
 
@@ -51,12 +51,30 @@ router.post('/register', async (req: Request, res: Response) => {
         // Initialize sync state for the user
         await supabase.from('user_sync_state').insert([{ user_id: user.id }]);
 
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+        // --- MFA Flow Initialization ---
+        const otp = OtpService.generateOTP();
+        const otpHash = await OtpService.hashOTP(otp);
+
+        try {
+            await OtpService.storeOTP(user.id, otpHash);
+        } catch (otpErr) {
+            console.error('Failed to store registration OTP:', otpErr);
+            return res.status(500).json({ error: 'Failed to initialize security challenge' });
+        }
+
+        try {
+            await sendOTPEmail(email, otp);
+        } catch (mailErr) {
+            console.error('Registration MFA Email Error:', mailErr);
+            return res.status(500).json({ error: 'Failed to send verification email' });
+        }
 
         res.status(201).json({
-            token,
-            user: { id: user.id, email: user.email, displayName }
+            requiresMFA: true,
+            userId: user.id,
+            email: user.email
         });
+        // -------------------------------
     } catch (error: any) {
         console.error('Registration error:', error);
         res.status(500).json({ error: 'Server error', details: error.message || error });
@@ -112,20 +130,13 @@ router.post('/login', async (req: Request, res: Response) => {
         }
 
         // --- MFA Flow Initialization ---
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes
+        const otp = OtpService.generateOTP();
+        const otpHash = await OtpService.hashOTP(otp);
 
-        const { error: otpError } = await supabase
-            .from('mfa_otps')
-            .insert([{
-                user_id: user.id,
-                otp_hash: otpHash,
-                expires_at: expiresAt
-            }]);
-
-        if (otpError) {
-            console.error('Failed to store OTP:', otpError);
+        try {
+            await OtpService.storeOTP(user.id, otpHash);
+        } catch (otpErr) {
+            console.error('Failed to store OTP:', otpErr);
             return res.status(500).json({ error: 'Failed to initialize security challenge' });
         }
 
@@ -157,38 +168,20 @@ router.post('/verify-mfa', async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
-
-        // Fetch valid OTP
-        const { data: mfaData, error: fetchError } = await supabase
-            .from('mfa_otps')
-            .select('*')
-            .eq('user_id', userId)
-            .gt('expires_at', new Date().toISOString())
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle();
-
-        if (fetchError || !mfaData) {
+        try {
+            const isValid = await OtpService.verifyOTP(userId, otp);
+            if (!isValid) {
+                return res.status(401).json({ error: 'Invalid verification code' });
+            }
+        } catch (verifyErr: any) {
+            if (verifyErr.message === 'Too many failed attempts') {
+                return res.status(403).json({ error: 'Too many failed attempts. Please login again.' });
+            }
             return res.status(401).json({ error: 'Invalid or expired verification code' });
         }
 
-        if (mfaData.attempts >= 5) {
-            return res.status(403).json({ error: 'Too many failed attempts. Please login again.' });
-        }
-
-        if (mfaData.otp_hash !== otpHash) {
-            // Increment attempts
-            await supabase
-                .from('mfa_otps')
-                .update({ attempts: (mfaData.attempts || 0) + 1 })
-                .eq('id', mfaData.id);
-
-            return res.status(401).json({ error: 'Invalid verification code' });
-        }
-
         // Success! Clean up used OTP
-        await supabase.from('mfa_otps').delete().eq('user_id', userId);
+        await OtpService.invalidateOTP(userId);
 
         // Fetch full user data to issue token
         const { data: user } = await supabase
@@ -247,17 +240,12 @@ router.post('/resend-mfa', async (req: Request, res: Response) => {
         }
 
         // Generate new OTP
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+        const otp = OtpService.generateOTP();
+        const otpHash = await OtpService.hashOTP(otp);
 
-        // Delete old OTPs and insert new one
-        await supabase.from('mfa_otps').delete().eq('user_id', userId);
-        const { error: otpError } = await supabase
-            .from('mfa_otps')
-            .insert([{ user_id: userId, otp_hash: otpHash, expires_at: expiresAt }]);
-
-        if (otpError) {
+        try {
+            await OtpService.storeOTP(userId, otpHash);
+        } catch (otpError) {
             return res.status(500).json({ error: 'Failed to generate new code' });
         }
 

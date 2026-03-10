@@ -30,13 +30,12 @@ export const sendOTPEmail = async (to: string, otp: string) => {
     const mailOptions = {
         from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
         to,
-        subject: 'Secure Password Manager Login Verification',
-        text: `Your verification code is: ${otp}\n\nThis code expires in 5 minutes. If you did not request this, please secure your account immediately.`,
+        subject: 'ZeroVault Login Verification Code',
+        text: `Your verification code is: ${otp}\n\nThis code expires in 5 minutes.`,
         html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
-                <h2 style="color: #6366f1; text-align: center;">Zero Vault Login Verification</h2>
-                <p style="font-size: 16px; color: #475569;">Hello,</p>
-                <p style="font-size: 16px; color: #475569;">Your verification code for logging into <strong>Zero Vault</strong> is:</p>
+                <h2 style="color: #10b981; text-align: center;">ZeroVault Login Verification Code</h2>
+                <p style="font-size: 16px; color: #475569;">Your verification code is:</p>
                 <div style="background: #f1f5f9; padding: 20px; text-align: center; border-radius: 8px; margin: 24px 0;">
                     <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1e293b;">${otp}</span>
                 </div>

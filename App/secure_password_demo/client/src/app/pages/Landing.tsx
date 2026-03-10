@@ -3,7 +3,7 @@ import { Suspense, lazy, useState } from 'react';
 import { SignInPage, type Testimonial } from '@/app/components/ui/sign-in';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useToast } from '@/app/contexts/ToastContext';
-import { MfaVerification } from '@/app/components/ui/mfa-verification';
+import { OtpVerification } from '@/app/components/ui/OtpVerification';
 
 const Spline = lazy(() => import('@splinetool/react-spline'));
 
@@ -59,7 +59,7 @@ export default function Landing() {
             <div className="h-[100dvh] w-[100dvw] bg-background relative overflow-hidden flex flex-col md:flex-row font-body">
                 {/* Left column: MFA form */}
                 <section className="flex-1 flex items-center justify-center p-8 bg-card relative z-20">
-                    <MfaVerification
+                    <OtpVerification
                         userId={mfaData.userId}
                         email={mfaData.email}
                         onCancel={() => setMfaData(null)}

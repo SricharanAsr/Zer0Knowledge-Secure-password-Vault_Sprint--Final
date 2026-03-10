@@ -4,13 +4,13 @@ import { useAuth } from '@/app/contexts/AuthContext';
 import { useToast } from '@/app/contexts/ToastContext';
 import { useLocation } from 'wouter';
 
-interface MfaVerificationProps {
+interface OtpVerificationProps {
     userId: string;
     email: string;
     onCancel: () => void;
 }
 
-export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, email, onCancel }) => {
+export const OtpVerification: React.FC<OtpVerificationProps> = ({ userId, email, onCancel }) => {
     const [otp, setOtp] = useState('');
     const [isVerifying, setIsVerifying] = useState(false);
     const [resendCooldown, setResendCooldown] = useState(0);
@@ -38,6 +38,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, email,
         setIsVerifying(true);
         try {
             await verifyMfa(userId, otp);
+            showToast('Login successful!', 'success');
             setLocation('/dashboard');
         } catch (error: any) {
             console.error('MFA Error:', error);
@@ -53,6 +54,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, email,
         try {
             await resendMfa(userId);
             setResendCooldown(30);
+            showToast('New verification code sent', 'success');
         } catch (error) {
             // Error is handled by AuthContext
         }

@@ -6,7 +6,7 @@ interface AuthContextType extends AuthState {
     login: (email: string, password: string) => Promise<{ requiresMFA?: boolean; userId?: string; email?: string } | void>;
     verifyMfa: (userId: string, otp: string) => Promise<void>;
     resendMfa: (userId: string) => Promise<void>;
-    register: (email: string, password: string, displayName?: string) => Promise<void>;
+    register: (email: string, password: string, displayName?: string) => Promise<{ requiresMFA?: boolean; userId?: string; email?: string } | void>;
     logout: () => void;
 }
 
@@ -189,8 +189,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Registration failed');
+            if (data.requiresMFA) {
+                return data; // Return MFA info to the component
             }
 
             localStorage.setItem('vault_token', data.token);
