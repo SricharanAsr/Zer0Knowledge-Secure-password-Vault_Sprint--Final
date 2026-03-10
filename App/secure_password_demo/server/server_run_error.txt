@@ -226,3 +226,23 @@ Native Risk Engine not found in security.ts, using TS fallback
 Connected to Supabase PostgreSQL
 Server running on port 5000
 Email Service SMTP Connection: READY
+[INFO] 18:17:47 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\utils\emailService.ts has been modified
+[dotenv@17.2.3] injecting env (9) from .env -- tip: ≡ƒ¢á∩╕Å  run anywhere with `dotenvx run -- yourcommand`
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒöæ add access controls to secrets: https://dotenvx.com/ops
+Initializing Email Service...
+ENV Check - Host: true User: true Pass: true
+Native Risk Engine not found, using TypeScript fallback
+Native Risk Engine not found in security.ts, using TS fallback
+Connected to Supabase PostgreSQL
+Server running on port 5000
+Email Service SMTP Connection: READY (IPv4 Forced)
+[INFO] 18:18:04 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\utils\emailService.ts has been modified
+[dotenv@17.2.3] injecting env (9) from .env -- tip: ≡ƒùé∩╕Å backup and recover secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: Γ£à audit secrets and track compliance: https://dotenvx.com/ops
+Initializing Email Service...
+ENV Check - Host: true User: true Pass: true
+Native Risk Engine not found, using TypeScript fallback
+Native Risk Engine not found in security.ts, using TS fallback
+Connected to Supabase PostgreSQL
+Server running on port 5000
+Email Service SMTP Connection: READY (IPv4 Forced)

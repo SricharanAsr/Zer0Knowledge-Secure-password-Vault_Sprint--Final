@@ -5,9 +5,13 @@ console.log('ENV Check - Host:', !!process.env.EMAIL_HOST, 'User:', !!process.en
 
 const isGmail = (process.env.EMAIL_HOST || '').includes('gmail.com') || !process.env.EMAIL_HOST;
 const port = parseInt(process.env.EMAIL_PORT || '587');
+const isSecure = port === 465;
 
-// Use a configuration object and cast to satisfy complex nodemailer types
+// Build configuration
 const transportConfig: any = {
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: port,
+    secure: isSecure, // true for 465, false for other ports
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -18,17 +22,14 @@ const transportConfig: any = {
         rejectUnauthorized: false,
         minVersion: 'TLSv1.2'
     },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000
+    connectionTimeout: 15000, // Increase slightly for cloud networks
+    greetingTimeout: 15000,
+    socketTimeout: 20000
 };
 
-if (isGmail) {
+// If using Gmail service defaults on port 465
+if (isGmail && isSecure) {
     transportConfig.service = 'gmail';
-} else {
-    transportConfig.host = process.env.EMAIL_HOST;
-    transportConfig.port = port;
-    transportConfig.secure = port === 465;
 }
 
 const transporter = nodemailer.createTransport(transportConfig);
@@ -40,10 +41,11 @@ transporter.verify((error) => {
             message: error.message,
             code: (error as any).code,
             command: (error as any).command,
-            stack: error.stack
+            port: port,
+            secure: isSecure
         });
     } else {
-        console.log('Email Service SMTP Connection: READY (IPv4 Forced)');
+        console.log(`Email Service SMTP Connection: READY (Port: ${port}, Secure: ${isSecure}, IPv4: Forced)`);
     }
 });
 
