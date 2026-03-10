@@ -4,7 +4,6 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "prebuild:addon": "node -e \"require('fs').cpSync('../../../risk-engine', './src/native/risk-engine', {recursive: true, force: true})\"",
     "build:addon": "npx --yes node-gyp rebuild",
     "install": "npm run build:addon || echo 'Native build failed, using JS fallback'",
     "build": "tsc",

@@ -29,3 +29,13 @@ dist-ssr
 
 # Reference repo snapshot (merged into project, no longer needed)
 w_password_manager_ref/
+
+# Native Risk Engine artifacts
+**/src/native/risk-engine/build/
+**/src/native/risk-engine/*.exe
+**/src/native/risk-engine/*.o
+**/src/native/risk-engine/risk_engine.o
+**/src/native/risk-engine/test_*.exe
+**/src/native/risk-engine/verify_audit_log.exe
+**/src/native/risk-engine/dump_audit_log.exe
+**/src/native/risk-engine/.vscode/
