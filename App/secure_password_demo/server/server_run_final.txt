@@ -240,3 +240,6 @@ Initializing Email Service...
 ENV Check - Host: true User: true Pass: true
 Native Risk Engine not found, using TypeScript fallback
 Native Risk Engine not found in security.ts, using TS fallback
+Connected to Supabase PostgreSQL
+Server running on port 5000
+Email Service SMTP Connection: READY

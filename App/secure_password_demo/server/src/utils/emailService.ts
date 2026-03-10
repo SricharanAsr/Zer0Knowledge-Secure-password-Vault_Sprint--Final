@@ -4,30 +4,46 @@ console.log('Initializing Email Service...');
 console.log('ENV Check - Host:', !!process.env.EMAIL_HOST, 'User:', !!process.env.EMAIL_USER, 'Pass:', !!process.env.EMAIL_PASS);
 
 const isGmail = (process.env.EMAIL_HOST || '').includes('gmail.com') || !process.env.EMAIL_HOST;
+const port = parseInt(process.env.EMAIL_PORT || '587');
 
-const transporter = nodemailer.createTransport({
-    // Use 'service' shorthand for Gmail as it handles port/secure/tls defaults better on cloud
-    ...(isGmail ? { service: 'gmail' } : {
-        host: process.env.EMAIL_HOST,
-        port: parseInt(process.env.EMAIL_PORT || '587'),
-        secure: process.env.EMAIL_PORT === '465',
-    }),
+// Use a configuration object and cast to satisfy complex nodemailer types
+const transportConfig: any = {
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
+    // Force IPv4 as cloud providers like Render often have issues with IPv6 SMTP routes
+    family: 4,
     tls: {
-        // Essential for some cloud environments
-        rejectUnauthorized: false
-    }
-});
+        rejectUnauthorized: false,
+        minVersion: 'TLSv1.2'
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000
+};
+
+if (isGmail) {
+    transportConfig.service = 'gmail';
+} else {
+    transportConfig.host = process.env.EMAIL_HOST;
+    transportConfig.port = port;
+    transportConfig.secure = port === 465;
+}
+
+const transporter = nodemailer.createTransport(transportConfig);
 
 // Verify connection on startup to log status in Render/Production
 transporter.verify((error) => {
     if (error) {
-        console.error('Email Service SMTP Connection Error:', error);
+        console.error('Email Service SMTP Connection Error:', {
+            message: error.message,
+            code: (error as any).code,
+            command: (error as any).command,
+            stack: error.stack
+        });
     } else {
-        console.log('Email Service SMTP Connection: READY');
+        console.log('Email Service SMTP Connection: READY (IPv4 Forced)');
     }
 });
 
