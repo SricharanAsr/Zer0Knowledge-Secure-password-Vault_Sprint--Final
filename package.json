@@ -1,0 +1,30 @@
+{
+    "name": "secure_password_manager",
+    "version": "1.0.0",
+    "description": "Secure Password Manager with CI/CD and E2E Testing",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Running all tests...\"",
+        "test:server": "cd App/secure_password_demo/server && npm test",
+        "test:e2e": "cd App/secure_password_demo/e2e && npx playwright test",
+        "test:report": "node scripts/qa-touch-reporter.js",
+        "test:all": "npm run test:server && npm run test:e2e && npm run test:report"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.98.0",
+        "bcryptjs": "^3.0.3",
+        "cors": "^2.8.6",
+        "dotenv": "^17.2.3",
+        "express": "^5.2.1",
+        "express-rate-limit": "^8.2.1",
+        "jsonwebtoken": "^9.0.3"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^3.0.0",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
+        "@types/jsonwebtoken": "^9.0.10",
+        "typescript": "^5.9.3"
+    },
+    "license": "ISC"
+}
