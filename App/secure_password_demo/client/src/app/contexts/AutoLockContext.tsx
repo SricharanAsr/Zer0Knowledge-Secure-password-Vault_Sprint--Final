@@ -64,7 +64,7 @@ export function AutoLockProvider({ children }: { children: ReactNode }) {
 
     const lockVault = () => {
         // Clear sensitive data from memory
-        localStorage.removeItem('vaultMasterPassword');
+        sessionStorage.removeItem('vaultMasterPassword');
 
         // Redirect to unlock page
         setLocation('/unlock');
@@ -72,8 +72,8 @@ export function AutoLockProvider({ children }: { children: ReactNode }) {
 
     const panicLock = () => {
         // Immediate lock with memory cleanup
-        localStorage.clear();
         sessionStorage.clear();
+        localStorage.clear(); // Keep this for theme etc but auth is in session
 
         // Clear clipboard
         navigator.clipboard.writeText('');

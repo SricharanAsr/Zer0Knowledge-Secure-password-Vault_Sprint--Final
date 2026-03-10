@@ -9,6 +9,7 @@ import Settings from './pages/Settings';
 import Transparency from './pages/Transparency';
 import ExtensionMockup from './pages/ExtensionMockup';
 import Insights from './pages/Insights';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import ErrorBoundary from '@/app/components/ErrorBoundary';
 import { ToastProvider } from './contexts/ToastContext';
@@ -79,14 +80,18 @@ function App() {
                                         <Route path="/register" component={Register} />
                                         <Route path="/unlock" component={Unlock} />
                                         <Route path="/dashboard">
-                                            <PageTransition>
-                                                <Dashboard />
-                                            </PageTransition>
+                                            <ProtectedRoute>
+                                                <PageTransition>
+                                                    <Dashboard />
+                                                </PageTransition>
+                                            </ProtectedRoute>
                                         </Route>
                                         <Route path="/settings">
-                                            <PageTransition>
-                                                <Settings />
-                                            </PageTransition>
+                                            <ProtectedRoute>
+                                                <PageTransition>
+                                                    <Settings />
+                                                </PageTransition>
+                                            </ProtectedRoute>
                                         </Route>
                                         <Route path="/transparency">
                                             <PageTransition>
@@ -94,14 +99,18 @@ function App() {
                                             </PageTransition>
                                         </Route>
                                         <Route path="/extension">
-                                            <PageTransition>
-                                                <ExtensionMockup />
-                                            </PageTransition>
+                                            <ProtectedRoute>
+                                                <PageTransition>
+                                                    <ExtensionMockup />
+                                                </PageTransition>
+                                            </ProtectedRoute>
                                         </Route>
                                         <Route path="/insights">
-                                            <PageTransition>
-                                                <Insights />
-                                            </PageTransition>
+                                            <ProtectedRoute>
+                                                <PageTransition>
+                                                    <Insights />
+                                                </PageTransition>
+                                            </ProtectedRoute>
                                         </Route>
                                         <Route>
                                             <div className="min-h-screen flex items-center justify-center bg-background">

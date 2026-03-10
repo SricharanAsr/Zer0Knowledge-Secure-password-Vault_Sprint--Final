@@ -31,15 +31,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { showToast } = useToast();
     const [state, setState] = useState<AuthState>({
         user: null,
-        token: localStorage.getItem('vault_token'),
-        isAuthenticated: !!localStorage.getItem('vault_token'),
+        token: sessionStorage.getItem('vault_token'),
+        isAuthenticated: !!sessionStorage.getItem('vault_token'),
         isLoading: true,
     });
 
     useEffect(() => {
         const initializeAuth = async () => {
-            const token = localStorage.getItem('vault_token');
-            const savedUser = localStorage.getItem('vault_user');
+            const token = sessionStorage.getItem('vault_token');
+            const savedUser = sessionStorage.getItem('vault_user');
 
             if (token) {
                 try {
@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
                     if (response.ok) {
                         const userData = await response.json();
-                        localStorage.setItem('vault_user', JSON.stringify(userData));
+                        sessionStorage.setItem('vault_user', JSON.stringify(userData));
                         setState({
                             user: userData,
                             token,
@@ -75,8 +75,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
 
                 // If token invalid, logout
-                localStorage.removeItem('vault_token');
-                localStorage.removeItem('vault_user');
+                sessionStorage.removeItem('vault_token');
+                sessionStorage.removeItem('vault_user');
                 setState(prev => ({ ...prev, isLoading: false, token: null, isAuthenticated: false }));
             } else {
                 setState(prev => ({ ...prev, isLoading: false }));
@@ -104,10 +104,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 return data; // Return MFA info to the component
             }
 
-            localStorage.setItem('vault_token', data.token);
-            localStorage.setItem('vault_user', JSON.stringify(data.user));
+            sessionStorage.setItem('vault_token', data.token);
+            sessionStorage.setItem('vault_user', JSON.stringify(data.user));
             // For backward compatibility with existing code
-            localStorage.setItem('vaultEmail', data.user.email);
+            sessionStorage.setItem('vaultEmail', data.user.email);
 
             setState({
                 user: data.user,
@@ -138,9 +138,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 throw new Error(data.error || 'MFA verification failed');
             }
 
-            localStorage.setItem('vault_token', data.token);
-            localStorage.setItem('vault_user', JSON.stringify(data.user));
-            localStorage.setItem('vaultEmail', data.user.email);
+            sessionStorage.setItem('vault_token', data.token);
+            sessionStorage.setItem('vault_user', JSON.stringify(data.user));
+            sessionStorage.setItem('vaultEmail', data.user.email);
 
             setState({
                 user: data.user,
@@ -193,10 +193,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 return data; // Return MFA info to the component
             }
 
-            localStorage.setItem('vault_token', data.token);
-            localStorage.setItem('vault_user', JSON.stringify(data.user));
+            sessionStorage.setItem('vault_token', data.token);
+            sessionStorage.setItem('vault_user', JSON.stringify(data.user));
             // For backward compatibility
-            localStorage.setItem('vaultEmail', data.user.email);
+            sessionStorage.setItem('vaultEmail', data.user.email);
 
             setState({
                 user: data.user,
@@ -214,15 +214,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const logout = () => {
-        localStorage.removeItem('vault_token');
-        localStorage.removeItem('vault_user');
-        localStorage.removeItem('vaultEmail');
+        sessionStorage.removeItem('vault_token');
+        sessionStorage.removeItem('vault_user');
+        sessionStorage.removeItem('vaultEmail');
         // Clear everything outbox related just to be completely clean
-        Object.keys(localStorage).forEach(key => {
+        Object.keys(sessionStorage).forEach(key => {
             if (key.startsWith('vault_outbox_') || key.startsWith('vault_storage_')) {
-                localStorage.removeItem(key);
+                sessionStorage.removeItem(key);
             }
         });
+        localStorage.removeItem('vault_token'); // Clean up old storage if any
+        localStorage.removeItem('vault_user');
         setState({
             user: null,
             token: null,
