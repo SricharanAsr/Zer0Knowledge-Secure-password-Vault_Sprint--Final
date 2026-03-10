@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import { supabase } from '../storage/supabaseClient';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
+import * as fallbackEngine from "./riskEngineFallback";
+
 // Robust loading of Risk Engine (Native with JS Fallback)
 let riskEngine: any;
 try {
@@ -12,8 +14,7 @@ try {
     console.log('Successfully loaded native Risk Engine');
 } catch (e) {
     console.warn('Native Risk Engine not found, using TypeScript fallback');
-    // Important: Use relative path that works in both src and dist
-    riskEngine = require('./riskEngineFallback');
+    riskEngine = fallbackEngine;
 }
 
 const router = express.Router();

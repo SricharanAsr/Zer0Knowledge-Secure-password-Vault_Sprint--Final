@@ -1,11 +1,14 @@
 import express, { Request, Response } from 'express';
+import * as fallbackEngine from "./riskEngineFallback";
+
 // Robust loading of Risk Engine (Native with JS Fallback)
 let riskEngine: any;
 try {
     riskEngine = require('../../build/Release/risk_engine');
+    console.log('Successfully loaded native Risk Engine (security.ts)');
 } catch (e) {
     console.warn('Native Risk Engine not found in security.ts, using TS fallback');
-    riskEngine = require('./riskEngineFallback');
+    riskEngine = fallbackEngine;
 }
 
 const router = express.Router();
