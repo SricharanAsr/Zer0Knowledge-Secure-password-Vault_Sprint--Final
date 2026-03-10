@@ -33,7 +33,7 @@ export default function Transparency() {
     };
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background pb-24 lg:pb-0">
             {/* Header */}
             <div className="border-b border-white/5 glass-panel sticky top-0 z-10">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

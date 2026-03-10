@@ -70,7 +70,7 @@ export default function ExtensionMockup() {
     }, [currentUrl]);
 
     return (
-        <div className="min-h-screen bg-background font-body pb-24">
+        <div className="min-h-screen bg-background font-body pb-24 lg:pb-0">
             {/* Minimal Header */}
             <div className="border-b border-white/5 bg-secondary/20">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">

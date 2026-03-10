@@ -70,7 +70,7 @@ export default function Insights() {
         : 100;
 
     return (
-        <div className="min-h-screen bg-background pb-24 pt-8 px-4">
+        <div className="min-h-screen bg-background pb-24 lg:pb-8 pt-8 px-4">
             <div className="max-w-4xl mx-auto space-y-8">
                 {/* Header */}
                 <div className="flex flex-col gap-4">

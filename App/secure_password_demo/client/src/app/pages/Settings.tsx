@@ -128,7 +128,7 @@ export default function Settings() {
     };
 
     return (
-        <div className="min-h-screen bg-background font-body pb-24 text-foreground selection:bg-primary/30">
+        <div className="min-h-screen bg-background font-body pb-24 lg:pb-0 text-foreground selection:bg-primary/30">
             {/* Command Center Header */}
             <div className="relative overflow-hidden border-b border-white/5 bg-card/50 backdrop-blur-3xl pt-12 pb-8">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />

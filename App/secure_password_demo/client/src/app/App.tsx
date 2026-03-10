@@ -17,6 +17,7 @@ import { AutoLockProvider } from './contexts/AutoLockContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { VaultProvider } from './contexts/VaultContext';
+import Navigation from './components/Navigation';
 import './index.css';
 
 /**
@@ -121,6 +122,9 @@ function App() {
                                             </div>
                                         </Route>
                                     </Switch>
+
+                                    {/* Global Bottom Navigation (Mobile Only via CSS) */}
+                                    {!['/', '/register', '/unlock'].includes(location) && <Navigation />}
                                 </AnimatePresence>
                             </AutoLockProvider>
                         </VaultProvider>
