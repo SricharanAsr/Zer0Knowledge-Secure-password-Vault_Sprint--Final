@@ -219,4 +219,181 @@ router.post('/sync', authMiddleware, async (req: AuthRequest, res: Response) => 
     }
 });
 
+/**
+ * POST /api/vault
+ * Creates a new vault entry.
+ */
+router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+        const entry = req.body;
+
+        const { data: syncState } = await supabase
+            .from('user_sync_state')
+            .select('*')
+            .eq('user_id', userId)
+            .maybeSingle();
+
+        if (!syncState) return res.status(404).json({ error: 'Vault sync state not found' });
+
+        const nextVersion = syncState.vault_version + 1;
+        const now = new Date().toISOString();
+
+        const { data: newEntry, error } = await supabase
+            .from('vault_entries')
+            .insert([{
+                user_id: userId,
+                version: nextVersion,
+                title: entry.title,
+                username: entry.username,
+                password: entry.password,
+                website: entry.website,
+                category: entry.category,
+                is_favorite: entry.isFavorite || false,
+                is_deleted: false,
+                updated_at: now,
+                device_id: entry.device_id,
+                encrypted_history: []
+            }])
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        // Update Sync State
+        await supabase
+            .from('user_sync_state')
+            .update({ vault_version: nextVersion, last_synced_at: now })
+            .eq('user_id', userId);
+
+        res.status(201).json({
+            success: true,
+            entry: {
+                ...newEntry,
+                id: Number(newEntry.id),
+                isFavorite: newEntry.is_favorite,
+                updatedAt: newEntry.updated_at
+            },
+            vaultVersion: nextVersion
+        });
+    } catch (error) {
+        console.error('Create Entry Error:', error);
+        res.status(500).json({ error: 'Failed to create entry' });
+    }
+});
+
+/**
+ * PUT /api/vault/:id
+ * Updates an existing vault entry.
+ */
+router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+        const entryId = req.params.id;
+        const updates = req.body;
+
+        const { data: syncState } = await supabase
+            .from('user_sync_state')
+            .select('*')
+            .eq('user_id', userId)
+            .maybeSingle();
+
+        if (!syncState) return res.status(404).json({ error: 'Vault sync state not found' });
+
+        const nextVersion = syncState.vault_version + 1;
+        const now = new Date().toISOString();
+
+        const { data: updatedEntry, error } = await supabase
+            .from('vault_entries')
+            .update({
+                version: nextVersion,
+                title: updates.title,
+                username: updates.username,
+                password: updates.password,
+                website: updates.website,
+                category: updates.category,
+                is_favorite: updates.isFavorite,
+                updated_at: now,
+                device_id: updates.device_id,
+                encrypted_history: updates.encrypted_history
+            })
+            .eq('id', entryId)
+            .eq('user_id', userId)
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        // Update Sync State
+        await supabase
+            .from('user_sync_state')
+            .update({ vault_version: nextVersion, last_synced_at: now })
+            .eq('user_id', userId);
+
+        res.json({
+            success: true,
+            entry: {
+                ...updatedEntry,
+                id: Number(updatedEntry.id),
+                isFavorite: updatedEntry.is_favorite,
+                updatedAt: updatedEntry.updated_at
+            },
+            vaultVersion: nextVersion
+        });
+    } catch (error) {
+        console.error('Update Entry Error:', error);
+        res.status(500).json({ error: 'Failed to update entry' });
+    }
+});
+
+/**
+ * DELETE /api/vault/:id
+ * Soft-deletes a vault entry.
+ */
+router.delete('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+        const entryId = req.params.id;
+
+        const { data: syncState } = await supabase
+            .from('user_sync_state')
+            .select('*')
+            .eq('user_id', userId)
+            .maybeSingle();
+
+        if (!syncState) return res.status(404).json({ error: 'Vault sync state not found' });
+
+        const nextVersion = syncState.vault_version + 1;
+        const now = new Date().toISOString();
+
+        const { error } = await supabase
+            .from('vault_entries')
+            .update({
+                is_deleted: true,
+                deleted_at: now,
+                version: nextVersion,
+                updated_at: now
+            })
+            .eq('id', entryId)
+            .eq('user_id', userId);
+
+        if (error) throw error;
+
+        // Update Sync State
+        await supabase
+            .from('user_sync_state')
+            .update({ vault_version: nextVersion, last_synced_at: now })
+            .eq('user_id', userId);
+
+        res.json({
+            success: true,
+            vaultVersion: nextVersion,
+            deletedAt: now
+        });
+    } catch (error) {
+        console.error('Delete Entry Error:', error);
+        res.status(500).json({ error: 'Failed to delete entry' });
+    }
+});
+
 export default router;

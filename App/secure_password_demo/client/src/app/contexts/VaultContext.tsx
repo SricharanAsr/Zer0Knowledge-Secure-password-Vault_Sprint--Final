@@ -309,7 +309,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const handleOffline = () => {
             console.log('Network status: OFFLINE');
             setIsOnline(false);
-            showToast('Offline — changes queued', 'warning');
+            showToast('Offline — changes kept locally', 'warning');
         };
 
         window.addEventListener('online', handleOnline);
@@ -319,6 +319,38 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             window.removeEventListener('offline', handleOffline);
         };
     }, [showToast]);
+
+    // Polling effect: Check for server updates every 20 seconds
+    useEffect(() => {
+        if (!userId || !token || !isOnline) return;
+
+        const pollInterval = setInterval(async () => {
+            try {
+                // We use the normal GET /api/vault which returns version
+                const response = await fetch(API_BASE_URL, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const srvVer = data.vaultVersion || 0;
+
+                    if (srvVer > serverVersion) {
+                        console.log(`Polling: Server update detected (v${srvVer} > v${serverVersion}). Syncing...`);
+                        const serverEntries = (data.encryptedEntries || []).filter((e: VaultEntry) => !e.isDeleted);
+                        setEntries(serverEntries);
+                        setVaultVersion(srvVer);
+                        setServerVersion(srvVer);
+                        setLastSynced(data.lastSyncedAt);
+                    }
+                }
+            } catch (e) {
+                console.warn('Polling failed', e);
+            }
+        }, 20000); // 20 seconds
+
+        return () => clearInterval(pollInterval);
+    }, [userId, token, isOnline, serverVersion]);
 
     // Define syncVault properly to be used in effects
     const syncVault = useCallback(async () => {
@@ -394,9 +426,14 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const addEntry = useCallback(async (entryData: any) => {
+        // 1. Optimistic Update (Local)
+        const tempId = Date.now();
+        const encryptedPassword = await cryptoService.encrypt(entryData.password);
+
         const newEntry: VaultEntry = {
             ...entryData,
-            id: Date.now(),
+            id: tempId,
+            password: encryptedPassword,
             version: Math.max(vaultVersion, serverVersion) + 1,
             updatedAt: new Date().toISOString(),
             passwordHistory: [],
@@ -404,12 +441,39 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             isDeleted: false
         };
 
-        newEntry.password = await cryptoService.encrypt(newEntry.password);
-
         setEntries(prev => [...prev, newEntry]);
-        setVaultVersion(Math.max(vaultVersion, serverVersion) + 1);
-        // Toast is shown by the caller (Dashboard) to avoid duplicates
-    }, [vaultVersion, serverVersion]);
+        const nextLocalVer = Math.max(vaultVersion, serverVersion) + 1;
+        setVaultVersion(nextLocalVer);
+
+        // 2. Immediate Server Push if online
+        if (isOnline && token) {
+            try {
+                const response = await fetch(API_BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(newEntry)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Replace tempId with server ID if necessary, or just update versions
+                    setServerVersion(data.vaultVersion);
+                    setVaultVersion(data.vaultVersion);
+                    return;
+                }
+            } catch (e) {
+                console.error('Immediate push failed, falling back to outbox', e);
+            }
+        }
+
+        // 3. Fallback to Outbox/SyncQueue if offline or push failed
+        if (queueManager) {
+            syncVault();
+        }
+    }, [vaultVersion, serverVersion, isOnline, token, queueManager, syncVault]);
 
     const updateEntry = useCallback(async (id: number, entryData: Partial<VaultEntry>) => {
         const finalEntryData = { ...entryData };
@@ -418,6 +482,8 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (existing && entryData.password && entryData.password !== existing.password) {
             finalEntryData.password = await cryptoService.encrypt(entryData.password);
         }
+
+        let updatedEntryObj: VaultEntry | undefined;
 
         setEntries(prev => prev.map(e => {
             if (e.id === id) {
@@ -431,7 +497,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     ];
                 }
 
-                return {
+                updatedEntryObj = {
                     ...e,
                     ...finalEntryData,
                     version: Math.max(vaultVersion, serverVersion) + 1,
@@ -439,13 +505,41 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     passwordHistory,
                     isDeleted: false
                 };
+                return updatedEntryObj;
             }
             return e;
         }));
 
-        setVaultVersion(Math.max(vaultVersion, serverVersion) + 1);
-        // Toast is shown by the caller (Dashboard) to avoid duplicates
-    }, [entries, vaultVersion, serverVersion]);
+        const nextLocalVer = Math.max(vaultVersion, serverVersion) + 1;
+        setVaultVersion(nextLocalVer);
+
+        // Immediate Server Push
+        if (isOnline && token && updatedEntryObj) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updatedEntryObj)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setServerVersion(data.vaultVersion);
+                    setVaultVersion(data.vaultVersion);
+                    return;
+                }
+            } catch (e) {
+                console.error('PUT failed', e);
+            }
+        }
+
+        if (queueManager) {
+            syncVault();
+        }
+    }, [entries, vaultVersion, serverVersion, isOnline, token, queueManager, syncVault]);
 
     const deleteEntry = useCallback(async (id: number) => {
         console.log('deleteEntry triggered for id:', id);
@@ -461,9 +555,32 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
             return e;
         }));
+
         setVaultVersion(Math.max(vaultVersion, serverVersion) + 1);
-        // Toast is shown by the caller (Dashboard) to avoid duplicates
-    }, [vaultVersion, serverVersion]);
+
+        // Immediate Server Push (Soft Delete)
+        if (isOnline && token) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setServerVersion(data.vaultVersion);
+                    setVaultVersion(data.vaultVersion);
+                    return;
+                }
+            } catch (e) {
+                console.error('DELETE failed', e);
+            }
+        }
+
+        if (queueManager) {
+            syncVault();
+        }
+    }, [vaultVersion, serverVersion, isOnline, token, queueManager, syncVault]);
 
     // Process Outbox Effect
     useEffect(() => {
