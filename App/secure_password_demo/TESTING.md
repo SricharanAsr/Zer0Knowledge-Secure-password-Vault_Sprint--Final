@@ -1,12 +1,10 @@
-# 🧪 ZeroVault Testing & Quality Assurance Guide
+# ZeroVault Testing and Quality Assurance Documentation
 
-This document provides a comprehensive overview of the testing infrastructure, Quality Assurance (QA) processes, and the CI/CD pipeline for the ZeroVault Secure Password Manager.
+This document provides a technical overview of the testing infrastructure, Quality Assurance (QA) methodologies, and Continuous Integration (CI) workflows for the ZeroVault platform.
 
----
+## 1. Testing Infrastructure Overview
 
-## 🏗 Testing Pipeline Architecture
-
-The following diagram illustrates how our automated testing flows from local development to centralized Quality Assurance reporting.
+The ZeroVault testing environment is structured to validate security, performance, and functional integrity through automated pipelines.
 
 ```mermaid
 graph TD
@@ -28,30 +26,28 @@ graph TD
         QA --> PERF[k6 Performance Load Tests]
     end
 
-    subgraph "External Reporting"
-        RE --> |Status| GH[GitHub Checks]
-        BE --> |Status| GH
-        FE --> |Status| GH
-        API_TEST --> |JSON| QAT[QA Touch Reporter]
-        E2E_CI --> |Status| GH
-        QAT --> |API Sync| DASH[QA Touch Dashboard]
+    subgraph "Reporting and Audit"
+        RE --> |Output| GH[GitHub Actions Logs]
+        BE --> |Output| GH
+        FE --> |Output| GH
+        API_TEST --> |JSON| QAT[QA Touch Reporter Service]
+        E2E_CI --> |Output| GH
+        QAT --> |API Sync| DASH[QA Touch Metrics Dashboard]
     end
 ```
 
----
+## 2. Local Execution Procedures
 
-## 🚀 How to Run Tests Locally
-
-### 1. Backend Service (Unit & Integration)
-Focuses on the Risk Engine (C++ boundary) and the Node.js API logic.
+### 2.1 Backend and Risk Engine
+Validates the C++ native addon and the Node.js API server.
 ```bash
 cd App/secure_password_demo/server
 npm install
 npm test
 ```
 
-### 2. End-to-End (E2E) Testing
-Uses Playwright to simulate real user interactions across multiple browsers.
+### 2.2 End-to-End (E2E) Automation
+Simulates comprehensive user journeys using the Playwright framework.
 ```bash
 cd App/secure_password_demo/e2e
 npm install
@@ -59,38 +55,30 @@ npx playwright install
 npx playwright test
 ```
 
-### 3. Performance & Load Testing
-Uses k6 to ensure the system can handle concurrent users and high-stress scenarios.
+### 2.3 Performance Stress Testing
+Evaluates system throughput and latency using k6.
 ```bash
 cd App/secure_password_demo/performance
 k6 run load-test.js
 ```
 
----
+## 3. Automation Strategy
 
-## 🛠 CI/CD Pipeline Explanation
+The project utilizes two specialized GitHub Actions configurations to manage the security and stability lifecycle:
 
-Our Automation Strategy is split into two specialized pipelines:
+1.  **ZeroVault Full-Stack CI/CD (ci-cd.yml)**:
+    - **Risk Engine Core**: Compilation and unit testing of C11 native components.
+    - **Backend Server**: Integration testing of Node.js services and dependency verification.
+    - **Frontend Client**: Build verification and Vitest execution for React components.
 
-1.  **ZeroVault Full-Stack CI/CD (`ci-cd.yml`)**:
-    - **Purpose**: Essential verification for code health.
-    - **Stages**:
-        - **Risk Engine Core**: Compiles C11 code and runs native unit tests.
-        - **Backend Server**: Validates Node.js logic and dependencies.
-        - **Frontend Client**: Runs Vitest suite and generates production production builds.
+2.  **QA Automation Pipeline (qa-pipeline.yml)**:
+    - **API and Sync**: Validation of multi-device synchronization and data integrity.
+    - **Playwright E2E Suite**: Verification of critical UI paths, including vault creation and credential management.
+    - **k6 Performance**: Quantitative benchmarking against performance KPIs.
+    - **QA Touch Synchronization**: Automated data transmission to the QA Touch dashboard for engineering oversight.
 
-2.  **QA Automation Pipeline (`qa-pipeline.yml`)**:
-    - **Purpose**: High-level behavioral and performance validation.
-    - **Stages**:
-        - **API & Sync**: Testing data integrity and multi-device synchronization.
-        - **Playwright E2E**: Validating critical user journeys (Vault creation, credential management).
-        - **k6 Performance**: Benchmarking system latency and throughput.
-        - **QA Touch Sync**: Automatically uploads all test results to the centralized dashboard for engineering oversight.
+## 4. Quality Assurance Principles
 
----
-
-## 💎 Quality Assurance Philosophy
-
-- **Zero-Knowledge First**: Tests verify that master passwords never leave the client and that data is strictly decrypted locally.
-- **Cross-Platform Consistency**: Automated E2E runs across Chromium, Firefox, and WebKit to ensure a uniform user experience.
-- **Transparency**: Every build provides a detailed audit trail of security and functional health via GitHub Checks and QA Touch.
+- **Security Isolation**: Automated verification that master passwords remain strictly client-side.
+- **Cross-Browser Integrity**: Systematic testing across Chromium, Firefox, and WebKit engines.
+- **Continuous Audit**: Real-time visibility into the security posture of every commit via GitHub Checks and external reporting services.
