@@ -4,12 +4,15 @@ import jwt from 'jsonwebtoken';
 import { supabase } from '../storage/supabaseClient';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
-// Import the compiled Risk Engine Addon with JS fallback
+// Robust loading of Risk Engine (Native with JS Fallback)
 let riskEngine: any;
 try {
+    // Attempt to load native addon
     riskEngine = require('../../build/Release/risk_engine');
+    console.log('Successfully loaded native Risk Engine');
 } catch (e) {
-    console.warn('Native Risk Engine not found, using JS fallback');
+    console.warn('Native Risk Engine not found, using TypeScript fallback');
+    // Important: Use relative path that works in both src and dist
     riskEngine = require('./riskEngineFallback');
 }
 

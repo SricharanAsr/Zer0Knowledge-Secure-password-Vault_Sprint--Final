@@ -51,3 +51,17 @@ Native Risk Engine not found in security.ts, using JS fallback
 [dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
 Connected to Supabase PostgreSQL
 Server running on port 5000
+[INFO] 12:52:43 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\auth.ts has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+Native Risk Engine not found, using TypeScript fallback
+Native Risk Engine not found in security.ts, using JS fallback
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+Connected to Supabase PostgreSQL
+Server running on port 5000
+[INFO] 12:52:46 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+Native Risk Engine not found, using TypeScript fallback
+Native Risk Engine not found in security.ts, using TS fallback
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  write to custom object with { processEnv: myObject }
+Connected to Supabase PostgreSQL
+Server running on port 5000
