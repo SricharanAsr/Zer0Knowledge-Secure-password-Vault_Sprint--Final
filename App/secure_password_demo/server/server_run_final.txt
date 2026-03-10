@@ -208,3 +208,28 @@ OTP email successfully sent to konduruhemesh143@gmail.com
 [REQUEST] POST /api/auth/verify-mfa
 [REQUEST] POST /api/devices/register
 [REQUEST] GET /api/vault
+[INFO] 17:59:37 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\auth.ts has been modified
+[dotenv@17.2.3] injecting env (9) from .env -- tip: ≡ƒ¢á∩╕Å  run anywhere with `dotenvx run -- yourcommand`
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+Native Risk Engine not found, using TypeScript fallback
+Native Risk Engine not found in security.ts, using TS fallback
+Connected to Supabase PostgreSQL
+Server running on port 5000
+Email Service: SMTP Connection Ready
+[REQUEST] GET /api/auth/me
+[REQUEST] GET /api/auth/me
+[REQUEST] POST /api/devices/register
+[REQUEST] GET /api/vault
+Get Vault Error: {
+  code: '23503',
+  details: 'Key (user_id)=(c52743d9-45db-4f70-87db-8cd31e1dab5c) is not present in table "users".',
+  hint: null,
+  message: 'insert or update on table "user_sync_state" violates foreign key constraint "user_sync_state_user_id_fkey"'
+}
+[REQUEST] POST /api/auth/login
+Login request: { email: 'konduruhemesh778@gmail.com', password: '***' }
+{"event":"risk_evaluation","user":"konduruhemesh778@gmail.com","decision":"ALLOW","signals":{"secure_boot":true,"failed_login_count":4,"device_trusted":true}}
+OTP email successfully sent to konduruhemesh778@gmail.com
+[REQUEST] POST /api/auth/verify-mfa
+[REQUEST] POST /api/devices/register
+[REQUEST] GET /api/vault

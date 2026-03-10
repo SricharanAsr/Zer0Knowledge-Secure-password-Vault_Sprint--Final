@@ -62,12 +62,10 @@ router.post('/register', async (req: Request, res: Response) => {
             return res.status(500).json({ error: 'Failed to initialize security challenge' });
         }
 
-        try {
-            await sendOTPEmail(email, otp);
-        } catch (mailErr) {
-            console.error('Registration MFA Email Error:', mailErr);
-            return res.status(500).json({ error: 'Failed to send verification email' });
-        }
+        // Send OTP in background to reduce latency
+        sendOTPEmail(email, otp).catch(mailErr => {
+            console.error('Registration MFA Email Background Error:', mailErr);
+        });
 
         res.status(201).json({
             requiresMFA: true,
@@ -140,12 +138,10 @@ router.post('/login', async (req: Request, res: Response) => {
             return res.status(500).json({ error: 'Failed to initialize security challenge' });
         }
 
-        try {
-            await sendOTPEmail(email, otp);
-        } catch (mailErr) {
-            console.error('MFA Email Error:', mailErr);
-            return res.status(500).json({ error: 'Failed to send verification email' });
-        }
+        // Send OTP in background to reduce latency
+        sendOTPEmail(email, otp).catch(mailErr => {
+            console.error('MFA Email Background Error:', mailErr);
+        });
 
         return res.json({
             requiresMFA: true,
@@ -249,7 +245,11 @@ router.post('/resend-mfa', async (req: Request, res: Response) => {
             return res.status(500).json({ error: 'Failed to generate new code' });
         }
 
-        await sendOTPEmail(user.email, otp);
+        // Send OTP in background to reduce latency
+        sendOTPEmail(user.email, otp).catch(mailErr => {
+            console.error('MFA Resend Background Error:', mailErr);
+        });
+
         res.json({ success: true, message: 'New verification code sent' });
     } catch (error) {
         console.error('MFA Resend error:', error);
