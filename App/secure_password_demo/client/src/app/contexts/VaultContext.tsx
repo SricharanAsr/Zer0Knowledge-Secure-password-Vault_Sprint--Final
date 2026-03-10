@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import type { VaultEntry, VaultState } from '@/shared/models/vault.types';
 import { cryptoService } from '@/shared/sync/crypto.service';
 import { syncService } from '@/shared/sync/sync.service';
@@ -161,9 +162,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 if (response.ok) {
                     const data = await response.json();
                     const serverVer = data.vaultVersion || 0;
-                    const serverEntries: VaultEntry[] = (data.encryptedEntries || []).filter(
-                        (e: VaultEntry) => !e.isDeleted
-                    );
+                    const serverEntries: VaultEntry[] = (data.encryptedEntries || []); // Respect tombstones
 
                     console.log(`Init: server has ${serverEntries.length} entries (v${serverVer}), local has ${localEntries.length} entries (v${localVersion})`);
 
@@ -266,9 +265,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
                     const data = await response.json();
                     const serverVer = data.vaultVersion || 0;
-                    const serverEntries: VaultEntry[] = (data.encryptedEntries || []).filter(
-                        (e: VaultEntry) => !e.isDeleted
-                    );
+                    const serverEntries: VaultEntry[] = (data.encryptedEntries || []); // Respect tombstones
 
                     console.log(`Cross-tab sync: Server has ${serverEntries.length} entries (v${serverVer})`);
 
@@ -337,7 +334,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
                     if (srvVer > serverVersion) {
                         console.log(`Polling: Server update detected (v${srvVer} > v${serverVersion}). Syncing...`);
-                        const serverEntries = (data.encryptedEntries || []).filter((e: VaultEntry) => !e.isDeleted);
+                        const serverEntries = (data.encryptedEntries || []); // Respect tombstones
                         setEntries(serverEntries);
                         setVaultVersion(srvVer);
                         setServerVersion(srvVer);
@@ -350,6 +347,64 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }, 20000); // 20 seconds
 
         return () => clearInterval(pollInterval);
+    }, [userId, token, isOnline, serverVersion]);
+
+    // Supabase Realtime Subscription for instant updates
+    useEffect(() => {
+        if (!userId || !token || !isOnline) return;
+
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        if (!supabaseUrl || !supabaseKey) {
+            console.warn('Supabase credentials missing — Realtime disabled');
+            return;
+        }
+
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const channel = supabase
+            .channel(`vault_realtime_${userId}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'vault_entries',
+                    filter: `user_id=eq.${userId}`
+                },
+                async (payload) => {
+                    console.log('ZeroVault: Realtime change detected!', payload.eventType);
+
+                    // Force a fresh fetch from our API (which includes version check and decryption if needed)
+                    try {
+                        const response = await fetch(API_BASE_URL, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            const srvVer = data.vaultVersion || 0;
+                            if (srvVer > serverVersion) {
+                                console.log(`Realtime: Synchronizing to v${srvVer}`);
+                                const serverEntries = data.encryptedEntries || [];
+                                setEntries(serverEntries);
+                                setVaultVersion(srvVer);
+                                setServerVersion(srvVer);
+                                setLastSynced(data.lastSyncedAt);
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Realtime sync fetch failed', e);
+                    }
+                }
+            )
+            .subscribe((status) => {
+                console.log('ZeroVault: Realtime subscription status:', status);
+            });
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, [userId, token, isOnline, serverVersion]);
 
     // Define syncVault properly to be used in effects
@@ -399,7 +454,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             updateQueueSize();
         }
 
-    }, [userId, entries, serverVersion, syncConflict, queueManager, updateQueueSize]); // vaultVersion implied by entries check
+    }, [userId, entries, serverVersion, syncConflict, queueManager, updateQueueSize, vaultVersion]);
 
     // Auto-trigger sync generation when version changes
     useEffect(() => {
@@ -697,7 +752,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
 
         return () => { mounted = false; };
-    }, [queueSize, isOnline, syncConflict, token, userId, showToast, retryTrigger, queueManager, updateQueueSize]); // Added retryTrigger
+    }, [queueSize, isOnline, syncConflict, token, userId, showToast, retryTrigger, queueManager, updateQueueSize, vaultVersion, entries]); // Ensure all dependencies are included
 
     return (
         <VaultContext.Provider value={{
