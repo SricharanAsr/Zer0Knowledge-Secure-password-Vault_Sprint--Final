@@ -1,178 +1,120 @@
-# ZeroVault
+# Zero Vault 🛡️
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)
+![Node Version](https://img.shields.io/badge/node-%3E%3D20.19.0-brightgreen.svg)
+![Security](https://img.shields.io/badge/security-Zero--Knowledge-orange.svg)
 
-> **Zero-Knowledge Password Vault with Offline Synchronization**
+**Zero Vault** is a state-of-the-art, secure password management platform built with a **Zero-Knowledge Architecture**. It ensures that your sensitive data is encrypted client-side using industry-standard AES-GCM encryption before ever leaving your device. 
 
-ZeroVault is a secure, distributed password manager designed with privacy and reliability at its core. It employs a **Zero-Knowledge Architecture**, ensuring that your master password and sensitive data are encrypted client-side before ever reaching the server. With robust **offline support** and **conflict resolution**, your vault is always accessible and consistent across devices.
+The platform features a native C++ **Risk Engine** for high-performance security evaluations and a robust synchronization system powered by **Supabase**.
 
-## 📋 Table of Contents
-- [Intro](#zerovault)
-- [Features](#-features)
-- [Architecture](#-architecture)
-- [Tech Stack](#-tech-stack)
-- [Getting Started](#-getting-started)
-- [Testing](#-testing)
-- [Project Structure](#-project-structure)
-- [Troubleshooting](#-troubleshooting)
+---
 
+## 🌟 Key Features
 
-## ✨ Features
+- **🔒 Zero-Knowledge Security**: AES-GCM (256-bit) encryption happens entirely in your browser. Your master password and raw data are never transmitted.
+- **🛡️ Adaptive Risk Engine**: Integrated C++ native addon for real-time risk assessment (Secure Boot verification, Device Trust, and Brute-force detection).
+- **⚡ Automated JS Fallback**: Intelligent build system that automatically switches to a JavaScript security engine if native compilation is unavailable.
+- **☁️ Supabase Integration**: Reliable cloud synchronization and storage using PostgreSQL and Supabase Auth.
+- **📱 Responsive UI**: A premium, dark-mode first interface built with React 19, Framer Motion, and Tailwind CSS.
+- **✨ 3D Visuals**: Immersive experience with Spline 3D integrations.
 
-- **🔒 Zero-Knowledge Security**: AES-GCM encryption happens entirely in the browser. The server never sees your raw passwords.
-- **☁️ Offline Synchronization**: Make changes without an internet connection. ZeroVault queues your updates and syncs them automatically when you're back online.
-- **⚔️ Conflict Resolution**: Smart versioning system detects conflicting edits. Implements a "Server-Wins" strategy with manual resolution prompts to ensure data integrity.
-- **📱 Responsive Design**: Built with React and Tailwind CSS for a seamless experience on desktop and mobile.
-- **⚡ Modern Stack**: Powered by Vite for lightning-fast development and build performance.
+---
 
-## 🏗️ Architecture
+## 🏗️ Technical Architecture
 
-The following diagram illustrates the synchronization and conflict resolution flow when the client reconnects to the network:
+Zero Vault uses a decoupled architecture to ensure maximum security and performance.
 
+### Security Model
+1. **Client-Side Encryption**: Derived keys (PBKDF2) never leave the browser.
+2. **Native Risk Engine**: A low-level C module handles sensitive security decisions.
+3. **Database Security**: Row Level Security (RLS) policies in Supabase prevent unauthorized data access.
+
+### System Diagram
 ```mermaid
-sequenceDiagram
-    participant Client
-    participant SyncEngine
-    participant ConflictEngine
-    participant Backend
-
-    Client->>SyncEngine: Detect Network Restore
-    SyncEngine->>Backend: Request Server Version
-    Backend-->>SyncEngine: Server Version
-
-    alt Version Mismatch
-        SyncEngine->>Backend: Download Encrypted Deltas
-        SyncEngine->>SyncEngine: Decrypt + Merge
-        SyncEngine->>ConflictEngine: LWW / Tombstone Logic
-        ConflictEngine-->>SyncEngine: Resolved State
-        SyncEngine->>Backend: Upload Encrypted Merged State
-    end
-
-    SyncEngine->>Client: Update State Hash
+graph TD
+    A[React Frontend] -->|Encrypted Data| B[Express API Server]
+    B -->|Query/Auth| C[(Supabase PostgreSQL)]
+    B -->|Evaluation Signals| D{Risk Engine}
+    D -->|Native| E[.node C++ Addon]
+    D -->|Fallback| F[JS Logic]
+    A -->|3D Assets| G[Spline Runtime]
 ```
 
+---
 
-## 🛠 Tech Stack
+## 💻 Tech Stack
 
-**Frontend**
-- **React 19** with **TypeScript**
-- **Vite** (Build Tool)
-- **Tailwind CSS** (Styling)
-- **Vitest** & **React Testing Library** (Testing)
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS, Framer Motion, Spline.
+- **Backend**: Node.js, Express, TypeScript.
+- **Database/Auth**: Supabase (PostgreSQL).
+- **Native**: C++, Node-API (node-gyp).
 
-**Backend**
-- **Node.js** & **Express**
-- **MongoDB** & **Mongoose**
-- **JWT** (Authentication)
-- **Jest** & **Supertest** (Testing)
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- MongoDB (Local or Atlas URI)
+- **Node.js**: `v20.19+` or `v22.x` (Required for Vite & Spline compatibility)
+- **NPM**: `v10.x+`
+- **Compiler**: Visual Studio Build Tools (C++) *Optional* — only if you want to build the native addon.
 
 ### Installation
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/yourusername/zero-vault.git
-    cd zero-vault
-    ```
+1. **Clone & Navigate**
+   ```bash
+   cd Secure_Password_Manager_Extension/App/secure_password_demo
+   ```
 
-2.  **Install Frontend Dependencies**
-    ```bash
-    npm install
-    ```
+2. **Install Client Dependencies**
+   ```bash
+   cd client
+   npm install --legacy-peer-deps
+   ```
 
-3.  **Install Backend Dependencies**
-    ```bash
-    cd server
-    npm install
-    ```
+3. **Install Server Dependencies**
+   ```bash
+   cd ../server
+   npm install --legacy-peer-deps
+   ```
 
-### Running the Application
+### Configuration
+Ensure you have `.env` files in both `client/` and `server/` with the following keys:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `JWT_SECRET`
+- `SUPABASE_SERVICE_ROLE_KEY`
 
-1.  **Start the Backend Server**
-    Create a `.env` file in `server/` (see `server/.env.example`).
-    ```bash
-    cd server
-    npm run dev
-    # Server runs on http://localhost:5000
-    ```
+---
 
-2.  **Start the Frontend Client**
-    Open a new terminal in the root directory.
-    ```bash
-    npm run dev
-    # Client runs on http://localhost:5173
-    ```
+## 🛠️ Running the Application
 
-## 🧪 Testing
-
-ZeroVault maintains high code quality through rigorous testing of its synchronization and security logic.
-
-### 🟢 Backend Tests (Sync Integrity)
-Verifies the core delta sync algorithm, conflict detection (409 logic), and data persistence.
-
+### 1. Start the Backend
 ```bash
 cd server
-npm test
+npm run dev
 ```
-*Key scenarios covered: Delta Accept, Version Conflicts, Deduplication, Tombstones.*
+*Note: You may see a "Native Risk Engine not found" message. This is expected as the system automatically defaults to the JavaScript fallback.*
 
-### 🔵 Frontend Tests (Client Logic)
-Validates the offline outbox queue, service logic, and component integration.
-
+### 2. Start the Frontend
 ```bash
-# Run all unit/integration tests
-npm test
-
-# Graphical UI mode for debugging
-npm run test:ui
-
-# Check code coverage
-npm run test:coverage
+cd client
+npm run dev
 ```
-*Key scenarios covered: Offline Queuing, Delta Calculation, Conflict Handling.*
+Open `http://localhost:5173` in your browser.
 
-## 📂 Project Structure
+---
 
-```
-zero-vault/
-├── src/                  # Frontend Source
-│   ├── components/       # Reusable UI Components
-│   ├── contexts/         # State Management (Vault, Auth)
-│   ├── services/         # Business Logic (Sync, Crypto)
-│   └── types/            # TypeScript Definitions
-├── server/               # Backend Source
-│   ├── src/
-│   │   ├── models/       # Mongoose Schemas
-│   │   ├── routes/       # API Endpoints
-│   │   └── middleware/   # Auth & Validation
-│   └── jest.config.js    # Backend Test Config
-├── vite.config.ts        # Vite & Vitest Config
-└── package.json          # Dependency Manifest
-```
+## 🧪 Development & Testing
 
-## 🔧 Troubleshooting
+- **Backend Tests**: `cd server && npm test` (Jest)
+- **Frontend Tests**: `cd client && npm test` (Vitest)
+- **Build Native**: `npm run build:addon` (Requires C++ compiler)
 
--   **Sync Conflict Error**: If you see a conflict error, refresh the page. ZeroVault enforces a "Server-Wins" policy to prevent data corruption. Your stale local changes will be discarded to converge with the server state.
--   **"ERR_REQUIRE_ESM"**: Ensure you are using `happy-dom` environment in Vitest (already configured in `vite.config.ts`).
--   **MongoDB Connection**: Verify your `MONGODB_URI` in `server/.env` is correct and the database service is running.
+---
 
 ## 📄 License
-
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 🤝 Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Zero Vault is a research-focused project. Pull requests are welcome for security enhancements and performance optimizations.

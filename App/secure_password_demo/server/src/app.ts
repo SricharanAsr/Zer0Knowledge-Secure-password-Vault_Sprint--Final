@@ -9,7 +9,11 @@ import { generalLimiter, authLimiter } from './middleware/rateLimiter';
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigin = process.env.FRONTEND_URL || '*';
+app.use(cors({
+    origin: allowedOrigin,
+    credentials: true
+}));
 app.use(express.json());
 
 // US 3.10 — Rate Limiting: apply general limiter to all routes

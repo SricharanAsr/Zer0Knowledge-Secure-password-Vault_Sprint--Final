@@ -23,7 +23,9 @@ interface VaultContextType {
 
 const VaultContext = createContext<VaultContextType | undefined>(undefined);
 
-const API_BASE_URL = 'http://localhost:5000/api/vault';
+import { API_BASE_URL as BASE_URL } from '../config/apiConfig';
+
+const API_BASE_URL = `${BASE_URL}/vault`;
 
 /**
  * Provider component for the Vault Context.
@@ -124,7 +126,7 @@ export const VaultProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
             try {
                 const deviceInfo = getDeviceInfo();
-                await fetch('http://localhost:5000/api/devices/register', {
+                await fetch(`${BASE_URL}/devices/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

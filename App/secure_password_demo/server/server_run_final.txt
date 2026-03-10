@@ -1,0 +1,53 @@
+
+> server@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts
+
+[INFO] 11:25:24 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+Native Risk Engine not found, using JS fallback
+Native Risk Engine not found in security.ts, using JS fallback
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+Connected to Supabase PostgreSQL
+Server running on port 5000
+[INFO] 11:32:00 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\riskEngineFallback.js has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+Native Risk Engine not found, using JS fallback
+Native Risk Engine not found in security.ts, using JS fallback
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  specify custom .env file path with { path: '/custom/path/.env' }
+Connected to Supabase PostgreSQL
+Server running on port 5000
+[REQUEST] GET /api/auth/me
+[REQUEST] GET /api/auth/me
+[REQUEST] POST /api/devices/register
+[REQUEST] GET /api/vault
+[REQUEST] POST /api/auth/login
+Login request: { email: 'guru@gmail.com', password: '***' }
+{"event":"risk_evaluation","user":"guru@gmail.com","decision":"ALLOW","signals":{"secure_boot":true,"failed_login_count":8,"device_trusted":true}}
+[REQUEST] POST /api/devices/register
+[REQUEST] GET /api/vault
+[REQUEST] GET /api/auth/me
+[REQUEST] GET /api/auth/me
+[REQUEST] POST /api/devices/register
+[REQUEST] GET /api/vault
+[REQUEST] POST /api/auth/login
+Login request: { email: 'guru@gmail.com', password: '***' }
+{"event":"risk_evaluation","user":"guru@gmail.com","decision":"ALLOW","signals":{"secure_boot":true,"failed_login_count":9,"device_trusted":true}}
+[REQUEST] POST /api/devices/register
+[REQUEST] GET /api/vault
+[REQUEST] POST /api/vault/sync
+[REQUEST] GET /api/vault
+[REQUEST] GET /api/vault
+[REQUEST] POST /api/vault/sync
+[REQUEST] GET /api/vault
+[REQUEST] GET /api/vault
+[REQUEST] GET /api/devices
+[REQUEST] GET /api/devices
+[REQUEST] GET /api/devices
+[REQUEST] GET /api/devices
+[INFO] 12:17:07 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+Native Risk Engine not found, using JS fallback
+Native Risk Engine not found in security.ts, using JS fallback
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+Connected to Supabase PostgreSQL
+Server running on port 5000

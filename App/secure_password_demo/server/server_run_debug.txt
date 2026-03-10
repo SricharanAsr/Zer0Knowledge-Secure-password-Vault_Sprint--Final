@@ -1,0 +1,27 @@
+
+> server@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts
+
+[INFO] 11:24:58 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒùé∩╕Å backup and recover secrets: https://dotenvx.com/ops
+Native Risk Engine not found, using JS fallback
+Error: Cannot find module '../../build/Release/risk_engine'
+Require stack:
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\index.ts
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at require (node:internal/modules/helpers:179:18)
+    at Object.<anonymous> (C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts:3:20)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module._compile (C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\kondu\AppData\Local\Temp\ts-node-dev-hook-8041588756652835.js:69:33)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at require.extensions..jsx.require.extensions..js (C:\Users\kondu\AppData\Local\Temp\ts-node-dev-hook-8041588756652835.js:114:20)
+[ERROR] 11:24:59 Error: Cannot find module '../../build/Release/risk_engine'
+Require stack:
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\index.ts

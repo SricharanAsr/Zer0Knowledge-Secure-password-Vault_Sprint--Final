@@ -4,8 +4,14 @@ import jwt from 'jsonwebtoken';
 import { supabase } from '../storage/supabaseClient';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
-// Import the compiled Risk Engine Addon
-const riskEngine = require('../../build/Release/risk_engine');
+// Import the compiled Risk Engine Addon with JS fallback
+let riskEngine: any;
+try {
+    riskEngine = require('../../build/Release/risk_engine');
+} catch (e) {
+    console.warn('Native Risk Engine not found, using JS fallback');
+    riskEngine = require('./riskEngineFallback');
+}
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';

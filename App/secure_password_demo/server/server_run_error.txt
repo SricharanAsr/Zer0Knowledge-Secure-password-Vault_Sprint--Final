@@ -1,0 +1,106 @@
+
+> server@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts
+
+[INFO] 11:21:55 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+Error: Cannot find module '../../build/Release/risk_engine'
+Require stack:
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\auth.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\index.ts
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at require (node:internal/modules/helpers:179:18)
+    at Object.<anonymous> (C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\auth.ts:8:20)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module._compile (C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\kondu\AppData\Local\Temp\ts-node-dev-hook-8668181289989862.js:69:33)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at require.extensions..jsx.require.extensions..js (C:\Users\kondu\AppData\Local\Temp\ts-node-dev-hook-8668181289989862.js:114:20)
+[ERROR] 11:21:55 Error: Cannot find module '../../build/Release/risk_engine'
+Require stack:
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\auth.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\index.ts
+[INFO] 11:22:22 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\auth.ts has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒôí add observability to secrets: https://dotenvx.com/ops
+Native Risk Engine not found, using JS fallback
+Error: Cannot find module '../../build/Release/risk_engine'
+Require stack:
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\index.ts
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at require (node:internal/modules/helpers:179:18)
+    at Object.<anonymous> (C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts:3:20)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module._compile (C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\kondu\AppData\Local\Temp\ts-node-dev-hook-8668181289989862.js:69:33)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at require.extensions..jsx.require.extensions..js (C:\Users\kondu\AppData\Local\Temp\ts-node-dev-hook-8668181289989862.js:114:20)
+[ERROR] 11:22:23 Error: Cannot find module '../../build/Release/risk_engine'
+Require stack:
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\index.ts
+[INFO] 11:25:10 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\riskEngineFallback.js has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+Native Risk Engine not found, using JS fallback
+Error: Cannot find module '../../build/Release/risk_engine'
+Require stack:
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\index.ts
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at require (node:internal/modules/helpers:179:18)
+    at Object.<anonymous> (C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts:3:20)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module._compile (C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\node_modules\source-map-support\source-map-support.js:568:25)
+    at Module.m._compile (C:\Users\kondu\AppData\Local\Temp\ts-node-dev-hook-8668181289989862.js:69:33)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at require.extensions..jsx.require.extensions..js (C:\Users\kondu\AppData\Local\Temp\ts-node-dev-hook-8668181289989862.js:114:20)
+[ERROR] 11:25:11 Error: Cannot find module '../../build/Release/risk_engine'
+Require stack:
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts
+- C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\index.ts
+[INFO] 11:25:12 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\security.ts has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒæÑ sync secrets across teammates & machines: https://dotenvx.com/ops
+Native Risk Engine not found, using JS fallback
+Native Risk Engine not found in security.ts, using JS fallback
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+Connected to Supabase PostgreSQL
+Server running on port 5000
+[REQUEST] GET /api/auth/me
+[REQUEST] GET /api/auth/me
+[REQUEST] POST /api/devices/register
+[REQUEST] GET /api/vault
+[REQUEST] POST /api/auth/login
+Login request: { email: 'guru@gmail.com', password: '***' }
+{"event":"risk_evaluation","user":"guru@gmail.com","decision":"DENY","signals":{"secure_boot":true,"failed_login_count":8,"device_trusted":true}}
+[REQUEST] POST /api/auth/login
+Login request: { email: 'guru@gmail.com', password: '***' }
+{"event":"risk_evaluation","user":"guru@gmail.com","decision":"DENY","signals":{"secure_boot":true,"failed_login_count":8,"device_trusted":true}}
+[REQUEST] POST /api/auth/login
+Login request: { email: 'guru@gmail.com', password: '***' }
+{"event":"risk_evaluation","user":"guru@gmail.com","decision":"DENY","signals":{"secure_boot":true,"failed_login_count":8,"device_trusted":true}}
+[INFO] 11:32:00 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\routes\riskEngineFallback.js has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+Native Risk Engine not found, using JS fallback
+Native Risk Engine not found in security.ts, using JS fallback
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ΓÜÖ∩╕Å  enable debug logging with { debug: true }
+Connected to Supabase PostgreSQL
+Server running on port 5000
+[INFO] 12:17:07 Restarting: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\src\app.ts has been modified
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ≡ƒöä add secrets lifecycle management: https://dotenvx.com/ops
+Native Risk Engine not found, using JS fallback
+Native Risk Engine not found in security.ts, using JS fallback
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ≡ƒùé∩╕Å backup and recover secrets: https://dotenvx.com/ops
+Connected to Supabase PostgreSQL
+Server running on port 5000

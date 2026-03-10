@@ -6,6 +6,9 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "prebuild:addon": "node -e \"require('fs').cpSync('../../../risk-engine', './src/native/risk-engine', {recursive: true, force: true})\"",
     "build:addon": "npx --yes node-gyp rebuild",
+    "install": "npm run build:addon || echo 'Native build failed, using JS fallback'",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
@@ -16,6 +19,7 @@
   "description": "",
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
+    "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",

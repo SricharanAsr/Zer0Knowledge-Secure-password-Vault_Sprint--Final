@@ -1,6 +1,12 @@
 import express, { Request, Response } from 'express';
-// Import the compiled Risk Engine Addon
-const riskEngine = require('../../build/Release/risk_engine');
+// Import the compiled Risk Engine Addon with JS fallback
+let riskEngine: any;
+try {
+    riskEngine = require('../../build/Release/risk_engine');
+} catch (e) {
+    console.warn('Native Risk Engine not found in security.ts, using JS fallback');
+    riskEngine = require('./riskEngineFallback');
+}
 
 const router = express.Router();
 

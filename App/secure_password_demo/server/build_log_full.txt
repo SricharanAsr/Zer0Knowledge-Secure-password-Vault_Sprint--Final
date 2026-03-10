@@ -1,0 +1,87 @@
+gyp info it worked if it ends with ok
+gyp verb cli [
+gyp verb cli 'C:\\Program Files\\nodejs\\node.exe',
+gyp verb cli 'C:\\Users\\kondu\\AppData\\Local\\npm-cache\\_npx\\c463d28440264a05\\node_modules\\node-gyp\\bin\\node-gyp.js',
+gyp verb cli 'rebuild',
+gyp verb cli '--verbose'
+gyp verb cli ]
+gyp info using node-gyp@12.2.0
+gyp info using node@20.12.2 | win32 | x64
+gyp verb clean removing "build" directory
+gyp verb find Python --python was not set on the command line
+gyp verb find Python Python is not set from environment variable PYTHON
+gyp verb find Python checking if the py launcher can be used to find Python 3
+gyp verb find Python - executing "py.exe" to get Python 3 executable path
+gyp verb find Python - executable path is "C:\Users\kondu\AppData\Local\Programs\Python\Python311\python.exe"
+gyp verb find Python - executing "C:\Users\kondu\AppData\Local\Programs\Python\Python311\python.exe" to get version
+gyp verb find Python - version is "3.11.5"
+gyp info find Python using Python version 3.11.5 found at "C:\Users\kondu\AppData\Local\Programs\Python\Python311\python.exe"
+gyp verb get node dir no --target version specified, falling back to host node version: 20.12.2
+
+gyp verb install input version string "20.12.2"
+gyp verb install installing version: 20.12.2
+gyp verb install --ensure was passed, so won't reinstall if already installed
+gyp verb install version is already installed, need to check "installVersion"
+gyp verb got "installVersion" 11
+gyp verb needs "installVersion" 11
+gyp verb install version is good
+gyp verb on Windows; need to check node.lib 
+gyp verb get node dir target node version installed: 20.12.2
+gyp verb build dir attempting to create "build" dir: C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server\build
+gyp verb build dir "build" dir needed to be created? Yes
+gyp verb find VS --msvs_version was not set on the command line
+gyp verb find VS VCINSTALLDIR not set, not running in VS Command Prompt
+gyp verb find VS could not use PowerShell to find Visual Studio 2017 or newer, try re-running with '--loglevel silly' for more details.
+gyp verb find VS 
+gyp verb find VS Failure details: undefined
+gyp verb find VS could not use PowerShell to find Visual Studio 2017 or newer, try re-running with '--loglevel silly' for more details.
+gyp verb find VS 
+gyp verb find VS Failure details: undefined
+gyp verb find VS could not use PowerShell to find Visual Studio 2017 or newer, try re-running with '--loglevel silly' for more details.
+gyp verb find VS 
+gyp verb find VS Failure details: undefined
+gyp verb find VS could not use PowerShell to find Visual Studio 2017 or newer, try re-running with '--loglevel silly' for more details.
+gyp verb find VS 
+gyp verb find VS Failure details: undefined
+gyp verb find VS not looking for VS2015 as it is only supported up to Node.js 18
+gyp verb find VS not looking for VS2013 as it is only supported up to Node.js 8
+gyp ERR! find VS 
+gyp ERR! find VS --msvs_version was not set on the command line
+gyp ERR! find VS VCINSTALLDIR not set, not running in VS Command Prompt
+gyp ERR! find VS could not use PowerShell to find Visual Studio 2017 or newer, try re-running with '--loglevel silly' for more details.
+gyp ERR! find VS 
+gyp ERR! find VS Failure details: undefined
+gyp ERR! find VS could not use PowerShell to find Visual Studio 2017 or newer, try re-running with '--loglevel silly' for more details.
+gyp ERR! find VS 
+gyp ERR! find VS Failure details: undefined
+gyp ERR! find VS could not use PowerShell to find Visual Studio 2017 or newer, try re-running with '--loglevel silly' for more details.
+gyp ERR! find VS 
+gyp ERR! find VS Failure details: undefined
+gyp ERR! find VS could not use PowerShell to find Visual Studio 2017 or newer, try re-running with '--loglevel silly' for more details.
+gyp ERR! find VS 
+gyp ERR! find VS Failure details: undefined
+gyp ERR! find VS not looking for VS2015 as it is only supported up to Node.js 18
+gyp ERR! find VS not looking for VS2013 as it is only supported up to Node.js 8
+gyp ERR! find VS 
+gyp ERR! find VS **************************************************************
+gyp ERR! find VS You need to install the latest version of Visual Studio
+gyp ERR! find VS including the "Desktop development with C++" workload.
+gyp ERR! find VS For more information consult the documentation at:
+gyp ERR! find VS https://github.com/nodejs/node-gyp#on-windows
+gyp ERR! find VS **************************************************************
+gyp ERR! find VS 
+gyp ERR! configure error 
+gyp ERR! stack Error: Could not find any Visual Studio installation to use
+gyp ERR! stack at VisualStudioFinder.fail (C:\Users\kondu\AppData\Local\npm-cache\_npx\c463d28440264a05\node_modules\node-gyp\lib\find-visualstudio.js:118:11)
+gyp ERR! stack at VisualStudioFinder.findVisualStudio (C:\Users\kondu\AppData\Local\npm-cache\_npx\c463d28440264a05\node_modules\node-gyp\lib\find-visualstudio.js:74:17)
+gyp ERR! stack at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+gyp ERR! stack at async createBuildDir (C:\Users\kondu\AppData\Local\npm-cache\_npx\c463d28440264a05\node_modules\node-gyp\lib\configure.js:112:18)
+gyp ERR! stack at async run (C:\Users\kondu\AppData\Local\npm-cache\_npx\c463d28440264a05\node_modules\node-gyp\bin\node-gyp.js:81:18)
+gyp ERR! System Windows_NT 10.0.26200
+gyp ERR! command "C:\\Program Files\\nodejs\\node.exe" "C:\\Users\\kondu\\AppData\\Local\\npm-cache\\_npx\\c463d28440264a05\\node_modules\\node-gyp\\bin\\node-gyp.js" "rebuild" "--verbose"
+gyp ERR! cwd C:\Users\kondu\OneDrive\Desktop\B.TECH\6 SEM\Software Engineering\FInal_Project\Final_Product\Secure_Password_Manager_Extension\App\secure_password_demo\server
+gyp ERR! node -v v20.12.2
+gyp ERR! node-gyp -v v12.2.0
+gyp ERR! $npm_package_name server
+gyp ERR! $npm_package_version 1.0.0
+gyp ERR! not ok 

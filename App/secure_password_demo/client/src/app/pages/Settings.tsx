@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useVault } from '@/app/contexts/VaultContext';
+import { API_BASE_URL as BASE_URL } from '../config/apiConfig';
 
 /**
  * The Settings Command Center.
@@ -62,7 +63,7 @@ export default function Settings() {
         const fetchDevices = async () => {
             if (!token) return;
             try {
-                const res = await fetch('http://localhost:5000/api/devices', {
+                const res = await fetch(`${BASE_URL}/devices`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
