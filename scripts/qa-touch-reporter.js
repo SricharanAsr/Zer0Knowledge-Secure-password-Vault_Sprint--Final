@@ -131,3 +131,5 @@ allResults.push(...parseJestResults(jestResultsPath));
 // ...
 
 pushToQATouch(allResults);
+
+
